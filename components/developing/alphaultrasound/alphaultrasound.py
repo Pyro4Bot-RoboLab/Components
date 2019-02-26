@@ -37,6 +37,6 @@ class ultrasound(control.Control):
         return (t2 - t1) * 34000 / 2
 
     @Pyro4.expose
-    def getDistance(self):
+    def get_distance(self):
         # print("%0.2f cm" % self.middleDistance)
         return self.middleDistance
