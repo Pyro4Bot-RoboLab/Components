@@ -176,7 +176,7 @@
       "stable": false
     },
     "alphaultrasound": {
-      "content": "alphaultrasound",
+      "content": "ultrasound",
       "path": "components/developing/alphaultrasound/alphaultrasound.py",
       "type": "TODO",
       "controller": "TODO",

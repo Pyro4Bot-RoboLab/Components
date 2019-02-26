@@ -1,20 +1,20 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import time
 from node.libs import control
 import Pyro4
-import RPi.GPIO as GPIO
+from node.libs.gpio.GPIO import *
 
 
-class alphaultrasound(control.Control):
-    """RCW-0002"""
-    __REQUIRED = []
+class ultrasound(control.Control):
+    """ RCW-0002 """
+    __REQUIRED = ["TRIG", "ECHO", "gpioservice"]
 
     def __init__(self):
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setwarnings(False)
-        GPIO.setup(self.TRIG, GPIO.OUT, initial=GPIO.LOW)
-        GPIO.setup(self.ECHO, GPIO.IN)
+        self.GPIO = GPIOCLS(self.gpioservice, self.pyro4id)
+        self.GPIO.setup(self.TRIG, OUT, initial=LOW)
+        self.GPIO.setup(self.ECHO, IN)
+
         self.middleDistance = 0
         self.start_worker(self.worker,)
 
@@ -25,13 +25,13 @@ class alphaultrasound(control.Control):
             # print("MiddleDistance = %0.2f cm" % self.middleDistance)
 
     def distance(self):
-        GPIO.output(self.TRIG, GPIO.HIGH)
+        self.GPIO.output(self.TRIG, HIGH)
         time.sleep(0.000015)
-        GPIO.output(self.TRIG, GPIO.LOW)
-        while not GPIO.input(self.ECHO):
+        self.GPIO.output(self.TRIG, LOW)
+        while not self.GPIO.input(self.ECHO):
             pass
         t1 = time.time()
-        while GPIO.input(self.ECHO):
+        while self.GPIO.input(self.ECHO):
             pass
         t2 = time.time()
         return (t2 - t1) * 34000 / 2
