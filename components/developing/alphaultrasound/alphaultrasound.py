@@ -12,7 +12,7 @@ class ultrasound(control.Control):
 
     def __init__(self):
         self.GPIO = GPIOCLS(self.gpioservice, self.pyro4id)
-        self.GPIO.setup(self.TRIG, OUT, initial=LOW)
+        self.GPIO.setup(self.TRIG, OUT)
         self.GPIO.setup(self.ECHO, IN)
 
         self.middleDistance = 0
