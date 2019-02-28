@@ -53,7 +53,7 @@ class l298n(control.Control):
         self.GPIO.output(self.IN4, LOW)
 
     @control.flask("actuator")
-    def setvel(self, DCA=100, DCB=100):
+    def set_vel(self, DCA=100, DCB=100):
         self.motor_a.ChangeDutyCycle(DCA)
         self.motor_b.ChangeDutyCycle(DCB)
         self.GPIO.output(self.IN1, LOW)
@@ -63,8 +63,8 @@ class l298n(control.Control):
 
     @control.flask("actuator")
     def left(self, DC=100):
-        self.setvel(0, DC)
+        self.set_vel(0, DC)
 
     @control.flask("actuator")
     def right(self, DC=100):
-        self.setvel(DC, 0)
+        self.set_vel(DC, 0)

@@ -62,7 +62,7 @@ class picam(control.Control):
         """Main worker."""
         while self.worker_run:
             for foo in self.camera.capture_continuous(self.buffer, 'jpeg', use_video_port=True):
-                # Si hay clientes a la espera...
+                # Si no hay clientes a la espera...
                 while len(self.clients) is 0:
                     time.sleep(2)
                 try:
@@ -107,13 +107,13 @@ class picam(control.Control):
 
     def acceptConnections(self):
         """Accept connections from clients"""
-        # print "Aceptando conexiones desde picamera"
+        # print("Aceptando conexiones desde picamera")
         for c in self.clients:
             c.acceptConnection()
 
     def setAsClosed(self, client, exception="None"):
         """Set client as closed"""
-        # print "Client: ", client.getClient(), "closing."
+        # print("Client: ", client.getClient(), "closing.")
         client.setClosed()
         try:
             client.connection.write(struct.pack('<L', 0))
@@ -128,9 +128,9 @@ class picam(control.Control):
         """Cleaner. Remove clients marked as closed every "sec" seconds."""
         while self.worker_run:
             time.sleep(sec)
-            # print "Antes:", self.clients
+            # print("Antes:", self.clients)
             self.clients = [c for c in self.clients if not c.closed]
-            # print "Despues:", self.clients
+            # print("Despues:", self.clients)
 
 
 class ClientSocket:
@@ -165,8 +165,7 @@ class ClientSocket:
         if self.connection is 0:
             print("PICAM-New client: {}".format(self.port))
             self.waitingForConnection = True
-            self.connection = self.serverSocket.accept(
-            )[0].makefile("rb" + str(self.port))
+            self.connection = self.serverSocket.accept()[0].makefile("rb" + str(self.port))
 
     def getClient(self):
         """ Return client information"""

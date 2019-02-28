@@ -53,7 +53,7 @@ class alphal298n(control.Control):
         self.GPIO.output(self.IN4, LOW)
 
     @control.flask("actuator")
-    def setvel(self, DCA, DCB, forwardA=True, forwardB=True):
+    def set_vel(self, DCA, DCB, forwardA=True, forwardB=True):
         if DCA > 100:
             DCA = 100
         elif DCA < 0:
@@ -80,8 +80,8 @@ class alphal298n(control.Control):
 
     @control.flask("actuator")
     def left(self, DC=100):
-        self.setvel(0, DC)
+        self.set_vel(0, DC)
 
     @control.flask("actuator")
     def right(self, DC=100):
-        self.setvel(DC, 0)
+        self.set_vel(DC, 0)

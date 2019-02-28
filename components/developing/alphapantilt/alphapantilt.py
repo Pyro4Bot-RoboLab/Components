@@ -7,8 +7,6 @@ import time
 from node.libs import control
 import Pyro4
 from node.libs.gpio.GPIO import *
-# import RPi.GPIO as GPIO
-
 
 @Pyro4.expose
 class alphapantilt(control.Control):
@@ -28,6 +26,9 @@ class alphapantilt(control.Control):
         # self.set_angle(self.PAN, self.cpan, 180)
         # self.set_angle(self.TILT, self.ctilt, 180)
 
+        self.ptblock = False
+        self.bar = False
+
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
         GPIO.setup(self.PAN, GPIO.OUT)
@@ -43,7 +44,6 @@ class alphapantilt(control.Control):
 
     @control.flask("actuator")
     @Pyro4.oneway
-    @Pyro4.expose
     def set_pantilt(self, pan=105, tilt=120):
         # print "pan", pan, "tilt", tilt
         self.pan_a = pan
@@ -58,5 +58,34 @@ class alphapantilt(control.Control):
         # self.cpan.stop()
         # self.ctilt.stop()
 
+    @control.flask("sensor", 2)
     def get_pantilt(self):
         return self.pan_a, self.tilt_a
+
+    @Pyro4.oneway
+    @control.flask("actuator")
+    def move(self, pan=40, tilt=90):
+        if pan < 10:
+            pan = 10
+        elif pan > 120:
+            pan = 120
+        if tilt < 15:
+            tilt = 15
+        elif tilt > 140:
+            tilt = 140
+        if self.ptblock is False:
+            self.set_pantilt(pan, tilt)
+            while self.pan_a != pan and self.tilt_a != tilt:
+                # print("Waiting for servo...")
+                self.ptblock = True
+            self.ptblock = False
+
+    @Pyro4.oneway
+    @control.flask("actuator")
+    def sweep(self, i, f):
+        if not self.bar:
+            self.bar = True
+            for l in range(i, f, 1):
+                self.move(l, 120)
+                time.sleep(0.005)
+            self.bar = False
