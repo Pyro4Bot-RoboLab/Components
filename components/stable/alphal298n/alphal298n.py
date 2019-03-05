@@ -9,7 +9,6 @@ import Pyro4
 from node.libs.gpio.GPIO import *
 
 
-@Pyro4.expose
 class alphal298n(control.Control):
     """Control L298N (Alphabot) through GPIO."""
 
@@ -19,40 +18,44 @@ class alphal298n(control.Control):
         self.GPIO = GPIOCLS(self.gpioservice, self.pyro4id)
         self.GPIO.setup([self.IN1, self.IN2, self.IN3,
                          self.IN4, self.ENA, self.ENB], OUT)
+
         self.motor_a = self.GPIO.PWM(self.ENA, 500)
         self.motor_b = self.GPIO.PWM(self.ENB, 500)
+
         self.motor_a.start(20)
         self.motor_b.start(50)
         self.stop()
 
-    @control.flask("actuator")
-    def forward(self, DCA=100, DCB=100):
-        self.motor_a.ChangeDutyCycle(DCA)
-        self.motor_b.ChangeDutyCycle(DCB)
-        self.GPIO.output(self.IN1, HIGH)
-        self.GPIO.output(self.IN2, LOW)
-        self.GPIO.output(self.IN3, LOW)
-        self.GPIO.output(self.IN4, HIGH)
-
-    @control.flask("actuator")
+    @Pyro4.expose
     def stop(self):
-        self.motor_a.ChangeDutyCycle(0)
-        self.motor_b.ChangeDutyCycle(0)
+        self.set_vel(0, 0)
+        # self.motor_a.ChangeDutyCycle(0)
+        # self.motor_b.ChangeDutyCycle(0)
         self.GPIO.output(self.IN1, LOW)
-        self.GPIO.output(self.IN2, LOW)
-        self.GPIO.output(self.IN3, LOW)
+        # self.GPIO.output(self.IN2, LOW)
+        # self.GPIO.output(self.IN3, LOW)
         self.GPIO.output(self.IN4, LOW)
 
-    @control.flask("actuator")
+    @Pyro4.expose
+    def forward(self, DCA=100, DCB=100):
+        self.set_vel(DCA, DCB)
+        # self.motor_a.ChangeDutyCycle(DCA)
+        # self.motor_b.ChangeDutyCycle(DCB)
+        # self.GPIO.output(self.IN1, HIGH)
+        # self.GPIO.output(self.IN2, LOW)
+        # self.GPIO.output(self.IN3, LOW)
+        # self.GPIO.output(self.IN4, HIGH)
+
+    @Pyro4.expose
     def backward(self, DCA=100, DCB=100):
-        self.motor_a.ChangeDutyCycle(DCA)
-        self.motor_b.ChangeDutyCycle(DCB)
-        self.GPIO.output(self.IN1, LOW)
-        self.GPIO.output(self.IN2, HIGH)
-        self.GPIO.output(self.IN3, HIGH)
-        self.GPIO.output(self.IN4, LOW)
+        self.set_vel(DCA, DCB, False, False)
+        # self.motor_a.ChangeDutyCycle(DCA)
+        # self.motor_b.ChangeDutyCycle(DCB)
+        # self.GPIO.output(self.IN1, LOW)
+        # self.GPIO.output(self.IN2, HIGH)
+        # self.GPIO.output(self.IN3, HIGH)
+        # self.GPIO.output(self.IN4, LOW)
 
-    @control.flask("actuator")
     def set_vel(self, DCA, DCB, forwardA=True, forwardB=True):
         if DCA > 100:
             DCA = 100
@@ -78,10 +81,10 @@ class alphal298n(control.Control):
             self.GPIO.output(self.IN3, HIGH)
             self.GPIO.output(self.IN4, LOW)
 
-    @control.flask("actuator")
+    @Pyro4.expose
     def left(self, DC=100):
         self.set_vel(0, DC)
 
-    @control.flask("actuator")
+    @Pyro4.expose
     def right(self, DC=100):
         self.set_vel(DC, 0)

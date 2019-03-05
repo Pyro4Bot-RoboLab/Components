@@ -25,7 +25,7 @@ class basemotion(control.Control):
     @Pyro4.expose
     @Pyro4.oneway
     @control.flask("actuator")
-    def set__vel(self, mi=1, md=1):
+    def set_vel(self, mi=1, md=1):
         # print "base " + str(mi) + "," + str(md)
         self.usbserial.command(com="base " + str(mi) + "," + str(md))
 
@@ -33,3 +33,23 @@ class basemotion(control.Control):
     @control.flask("sensor", 2)
     def get_base(self):
         return self.BASE
+
+    @Pyro4.expose
+    def left(self, DC=100):
+        self.set_vel(0, DC)
+
+    @Pyro4.expose
+    def right(self, DC=100):
+        self.set_vel(DC, 0)
+
+    @Pyro4.expose
+    def stop(self):
+        self.set_vel(0, 0)
+
+    @Pyro4.expose
+    def forward(self, DCA=100, DCB=100):
+        self.set_vel(DCA, DCB)
+
+    @Pyro4.expose
+    def backward(self, DCA=-100, DCB=-100):
+        self.set_vel(DCA, DCB)
