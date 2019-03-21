@@ -165,7 +165,7 @@ class ClientSocket:
         if self.connection is 0:
             print("PICAM-New client: {}".format(self.port))
             self.waitingForConnection = True
-            self.connection = self.serverSocket.accept()[0].makefile("rb" + str(self.port))
+            self.connection = self.serverSocket.accept()[0].makefile("wb")
 
     def getClient(self):
         """ Return client information"""

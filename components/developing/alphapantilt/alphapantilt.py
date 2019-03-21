@@ -45,7 +45,7 @@ class alphapantilt(control.Control):
     @control.flask("actuator")
     @Pyro4.oneway
     def set_pantilt(self, pan=105, tilt=120):
-        # print "pan", pan, "tilt", tilt
+        # print("pan", pan, "tilt", tilt)
         self.pan_a = pan
         self.tilt_a = tilt
         self.ctilt.start(50)
